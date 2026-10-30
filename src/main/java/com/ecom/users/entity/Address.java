@@ -3,6 +3,7 @@ package com.ecom.users.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,8 @@ public class Address {
     private String postalCode;
     @Column(name="country",nullable = false)
     private String country;
+    @Column(name="created_time",nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
     @Column(name="updated_time",nullable = false)
     @UpdateTimestamp

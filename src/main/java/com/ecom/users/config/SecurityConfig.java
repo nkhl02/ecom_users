@@ -1,5 +1,6 @@
 package com.ecom.users.config;
 
+import com.ecom.users.enums.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,10 +25,9 @@ public class SecurityConfig {
 //                        .anyRequest().authenticated())
                 .authorizeHttpRequests(request->
                         request
-                                .requestMatchers(HttpMethod.POST,"/v1/auth/register")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
+                                .requestMatchers(HttpMethod.POST,"/v1/auth/register").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/v1/user/getAllCustomers").hasRole(Role.ADMIN.name())
+                                .anyRequest().authenticated())
                 .httpBasic(withDefaults());
         return http.build();
     }

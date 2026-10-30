@@ -33,6 +33,7 @@ public class CustomUserDetailService implements UserDetailsService {
               return org.springframework.security.core.userdetails.User
                       .withUsername(user.get().getEmail())
                       .password(user.get().getPasswordHash())
+                      .roles(user.get().getRole().name())
                       .build();
         }else{
             throw new UsernameNotFoundException("Entered email does not exist");

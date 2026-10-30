@@ -15,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -35,6 +38,13 @@ public class UserServiceImpl implements UserService {
         }
 
         return toUserResponse(userRepository.save(toUserEntity(registerUserRequest)));
+    }
+
+    @Override
+    public List<UserResponse> fetchCustomers() {
+        return userRepository.findByRole(Role.CUSTOMER).stream()
+                .map(this::toUserResponse)
+                .collect(Collectors.toList());
     }
 
     public User toUserEntity(RegisterUserRequest userRequest){
