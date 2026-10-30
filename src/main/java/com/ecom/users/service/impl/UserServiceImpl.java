@@ -11,6 +11,8 @@ import com.ecom.users.enums.Status;
 import com.ecom.users.exception.custom.EmailAlreadyExistsException;
 import com.ecom.users.repository.UserRepository;
 import com.ecom.users.service.UserService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,8 +20,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository){
+    private final PasswordEncoder bCryptPasswordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder bCryptPasswordEncoder){
         this.userRepository =  userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -39,7 +44,7 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userRequest.lastName());
         user.setStatus(Status.ACTIVE);
         user.setRole(Role.CUSTOMER);
-        user.setPasswordHash(userRequest.password());
+        user.setPasswordHash(this.bCryptPasswordEncoder.encode(userRequest.password()));
         user.setPhoneNumber(userRequest.phoneNumber());
         user.setAddress(toAddressEntity(userRequest.address()));
         return user;
