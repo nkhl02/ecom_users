@@ -2,6 +2,7 @@ package com.ecom.users.exception;
 
 import com.ecom.users.dto.response.ErrorResponse;
 import com.ecom.users.exception.custom.EmailAlreadyExistsException;
+import com.ecom.users.exception.custom.EmailNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,4 +29,13 @@ public class GlobalExceptionHandler {
                 "Request Validation Failed",exception.getMessage(),request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEmailNotFound(EmailNotFoundException exception,
+                                                             HttpServletRequest request){
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+                "Request Validation Failed",exception.getMessage(),request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
 }

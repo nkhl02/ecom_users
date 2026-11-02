@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request->
                         request
                                 .requestMatchers(HttpMethod.POST,"/v1/auth/register").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/v1/user/getAllCustomers").hasRole(Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.GET,"/v1/admin/****").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated())
                 .httpBasic(withDefaults());
         return http.build();

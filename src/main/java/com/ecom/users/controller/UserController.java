@@ -1,14 +1,16 @@
 package com.ecom.users.controller;
 
+import com.ecom.users.dto.request.UpdateUserRequest;
 import com.ecom.users.dto.response.UserResponse;
 import com.ecom.users.entity.User;
 import com.ecom.users.service.UserService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,8 +29,20 @@ public class UserController {
         return ResponseEntity.ok("Healthy");
     }
 
-    @GetMapping("/getAllCustomers")
-    public ResponseEntity<List<UserResponse>> fetchCustomers(){
-            return ResponseEntity.ok(this.userService.fetchCustomers());
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(this.userService.getCurrentUser(userDetails.getUsername()));
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<UserResponse> updateCurretUser(@RequestBody UpdateUserRequest updateUserRequest,
+                                                         @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(this.userService.updateCurrentUser(userDetails.getUsername(),updateUserRequest));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal UserDetails userDetails){
+        this.userService.deleteCurrentUser(userDetails.getUsername());
+        return ResponseEntity.noContent().build();
     }
 }

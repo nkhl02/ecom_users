@@ -2,6 +2,8 @@ package com.ecom.users.service.impl;
 
 import com.ecom.users.dto.request.AddressRequest;
 import com.ecom.users.dto.request.RegisterUserRequest;
+import com.ecom.users.dto.request.UpdateUserRequest;
+import com.ecom.users.dto.request.UpdateUserStatusRequest;
 import com.ecom.users.dto.response.AddressResponse;
 import com.ecom.users.dto.response.UserResponse;
 import com.ecom.users.entity.Address;
@@ -9,13 +11,20 @@ import com.ecom.users.entity.User;
 import com.ecom.users.enums.Role;
 import com.ecom.users.enums.Status;
 import com.ecom.users.exception.custom.EmailAlreadyExistsException;
+import com.ecom.users.exception.custom.EmailNotFoundException;
+import com.ecom.users.exception.custom.UserNotFoundException;
 import com.ecom.users.repository.UserRepository;
 import com.ecom.users.service.UserService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +54,57 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByRole(Role.CUSTOMER).stream()
                 .map(this::toUserResponse)
                 .collect(Collectors.toList());
+    }
+
+
+
+    @Override
+    public UserResponse getCurrentUser(String email) {
+        return toUserResponse(userRepository.findByEmail(email).get());
+    }
+
+    @Override
+    public UserResponse updateCurrentUser(String email, UpdateUserRequest updateUserRequest) {
+        User user = userRepository.findByEmail(email).stream().findFirst().orElseThrow(()-> new EmailNotFoundException(email));
+        if(updateUserRequest.firstName()!=null){
+        user.setFirstName(updateUserRequest.firstName());
+        }
+        if(updateUserRequest.lastName()!=null){
+            user.setLastName(updateUserRequest.lastName());
+        }
+        if(updateUserRequest.phoneNumber()!=null){
+            user.setPhoneNumber(updateUserRequest.phoneNumber());
+        }
+
+        return toUserResponse(userRepository.save(user));
+
+    }
+
+    @Override
+    public void deleteCurrentUser(String email) {
+        userRepository.delete(userRepository.findByEmail(email).stream().findFirst().orElseThrow(() -> new EmailNotFoundException(email)));
+    }
+
+    @Override
+    public UserResponse getUser(UUID userId) {
+       User user = userRepository.findById(userId).stream().findFirst().orElseThrow(()-> new UserNotFoundException(userId));
+       return toUserResponse(user);
+    }
+
+    @Override
+    public UserResponse updateUserStatus(UUID userId, UpdateUserStatusRequest updateUserStatusRequest) {
+        User user = userRepository.findById(userId).stream().findFirst().orElseThrow(()-> new UserNotFoundException(userId));
+        if(updateUserStatusRequest.status()!=null){
+            user.setStatus(updateUserStatusRequest.status());
+        }
+        return toUserResponse(userRepository.save(user));
+    }
+
+    @Override
+    public Page<UserResponse> fetchCustomersPaginated(Integer page, Integer size, String sortParam, String sortType) {
+        Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.fromString(sortType),sortParam));
+        Page<User> userPage = userRepository.findByRole(Role.CUSTOMER,pageable);
+        return userPage.map((user)->toUserResponse(user));
     }
 
     public User toUserEntity(RegisterUserRequest userRequest){
