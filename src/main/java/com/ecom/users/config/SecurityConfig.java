@@ -21,12 +21,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) {
         http
                 .csrf(csrf->csrf.disable())
-//                .authorizeHttpRequests(request->request
-//                        .anyRequest().authenticated())
                 .authorizeHttpRequests(request->
                         request
                                 .requestMatchers(HttpMethod.POST,"/v1/auth/register").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/v1/admin/****").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/v1/admin/**").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated())
                 .httpBasic(withDefaults());
         return http.build();

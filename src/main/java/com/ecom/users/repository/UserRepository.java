@@ -2,6 +2,7 @@ package com.ecom.users.repository;
 
 import com.ecom.users.entity.User;
 import com.ecom.users.enums.Role;
+import com.ecom.users.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User,UUID> {
         Optional<User> findByEmail(String email);
+        Optional<User> findByEmailAndStatus(String email, Status status);
         List<User> findByRole(Role role);
         Page<User> findByRole(Role role, Pageable pageable);
 }

@@ -4,6 +4,7 @@ import com.ecom.users.dto.request.UpdateUserRequest;
 import com.ecom.users.dto.response.UserResponse;
 import com.ecom.users.entity.User;
 import com.ecom.users.service.UserService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class UserController {
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<UserResponse> updateCurretUser(@RequestBody UpdateUserRequest updateUserRequest,
+    public ResponseEntity<UserResponse> updateCurretUser(@Valid @RequestBody UpdateUserRequest updateUserRequest,
                                                          @AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(this.userService.updateCurrentUser(userDetails.getUsername(),updateUserRequest));
     }

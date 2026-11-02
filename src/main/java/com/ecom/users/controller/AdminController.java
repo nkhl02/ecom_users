@@ -3,6 +3,7 @@ package com.ecom.users.controller;
 import com.ecom.users.dto.request.UpdateUserStatusRequest;
 import com.ecom.users.dto.response.UserResponse;
 import com.ecom.users.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class AdminController {
     }
 
     @PatchMapping("/updateUserStatus/{id}")
-    public ResponseEntity<UserResponse> updateUserStatus(@PathVariable("id") UUID userId, @RequestBody UpdateUserStatusRequest updateUserStatusRequest){
+    public ResponseEntity<UserResponse> updateUserStatus(@PathVariable("id") UUID userId, @Valid @RequestBody UpdateUserStatusRequest updateUserStatusRequest){
         return ResponseEntity.ok(this.userService.updateUserStatus(userId,updateUserStatusRequest));
     }
 

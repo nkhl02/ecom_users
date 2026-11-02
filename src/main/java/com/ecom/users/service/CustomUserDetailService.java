@@ -1,7 +1,9 @@
 package com.ecom.users.service;
 
 import com.ecom.users.entity.User;
+import com.ecom.users.enums.Status;
 import com.ecom.users.exception.custom.EmailAlreadyExistsException;
+import com.ecom.users.exception.custom.EmailNotFoundException;
 import com.ecom.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +29,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Optional<User> user = this.userRepository.findByEmail(email).stream().findFirst();
+        Optional<User> user = this.userRepository.findByEmailAndStatus(email, Status.ACTIVE).stream().findFirst();
 
         if(user.isPresent()){
               return org.springframework.security.core.userdetails.User
@@ -36,7 +38,7 @@ public class CustomUserDetailService implements UserDetailsService {
                       .roles(user.get().getRole().name())
                       .build();
         }else{
-            throw new UsernameNotFoundException("Entered email does not exist");
+            throw new EmailNotFoundException("Entered email does not exist");
         }
 
 
