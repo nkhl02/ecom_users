@@ -38,7 +38,7 @@ public class CustomUserDetailService implements UserDetailsService {
                       .roles(user.get().getRole().name())
                       .build();
         }else{
-            throw new EmailNotFoundException("Entered email does not exist");
+            throw new UsernameNotFoundException("Invalid email or password");
         }
 
 
