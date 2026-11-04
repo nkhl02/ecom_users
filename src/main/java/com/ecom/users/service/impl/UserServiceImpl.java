@@ -5,6 +5,7 @@ import com.ecom.users.dto.request.RegisterUserRequest;
 import com.ecom.users.dto.request.UpdateUserRequest;
 import com.ecom.users.dto.request.UpdateUserStatusRequest;
 import com.ecom.users.dto.response.AddressResponse;
+import com.ecom.users.dto.response.AuthenicatedUserResponse;
 import com.ecom.users.dto.response.UserResponse;
 import com.ecom.users.entity.Address;
 import com.ecom.users.entity.User;
@@ -60,7 +61,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getCurrentUser(String email) {
-        return toUserResponse(userRepository.findByEmail(email).get());
+        return toUserResponse(userRepository.findByEmail(email).stream().findFirst().orElseThrow(
+                ()->new EmailNotFoundException(email)
+        ));
+    }
+
+    @Override
+    public AuthenicatedUserResponse getCurrentUserInternal(String email) {
+        return toUserResponseInternal(userRepository.findByEmail(email).stream().findFirst().orElseThrow(
+                ()->new EmailNotFoundException(email)
+                ));
     }
 
     @Override
@@ -138,6 +148,12 @@ public class UserServiceImpl implements UserService {
         return new UserResponse(userEntity.getId(),userEntity.getEmail(),userEntity.getFirstName(),
                 userEntity.getLastName(),userEntity.getPhoneNumber(),userEntity.getRole(),userEntity.getStatus(),
                 userEntity.getCreatedAt(),userEntity.getUpdatedAt(),toAddressResponse(userEntity.getAddress()));
+
+    }
+
+    public AuthenicatedUserResponse toUserResponseInternal(User userEntity){
+
+        return new AuthenicatedUserResponse(userEntity.getId(),userEntity.getEmail(),userEntity.getRole());
 
     }
 

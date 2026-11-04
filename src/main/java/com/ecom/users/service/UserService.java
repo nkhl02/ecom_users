@@ -3,6 +3,7 @@ package com.ecom.users.service;
 import com.ecom.users.dto.request.RegisterUserRequest;
 import com.ecom.users.dto.request.UpdateUserRequest;
 import com.ecom.users.dto.request.UpdateUserStatusRequest;
+import com.ecom.users.dto.response.AuthenicatedUserResponse;
 import com.ecom.users.dto.response.UserResponse;
 import com.ecom.users.entity.User;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,8 @@ public interface UserService {
     List<UserResponse> fetchCustomers();
 
     UserResponse getCurrentUser(String email);
+
+    AuthenicatedUserResponse getCurrentUserInternal(String email);
 
     UserResponse updateCurrentUser(String username, UpdateUserRequest updateUserRequest);
 
